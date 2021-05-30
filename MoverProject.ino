@@ -11,7 +11,6 @@ const int freq = 30000;
 const int pwmChannel1 = 0;
 const int pwmChannel2 = 1;
 const int resolution = 8;
-//int dutyCycle = 200;
 
 // Replace with your network credentials
 const char* ssid = "ssid";
@@ -33,7 +32,7 @@ HTTPUpdateServer httpUpdater;
 //#define DAC2 26
 int fullSpeed = 255;
 int halfSpeed = 230;
-int turnSpeed = 190;
+int turnSpeed = 185;
 
 #define motor_1_ENA 12
 #define motor_1_IN1 27
