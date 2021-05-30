@@ -45,6 +45,7 @@ int turnSpeed = 180;
 
 int analogValue = 0;
 String powerState = "OFF";
+char lastDir;
 
 void handleRoot() {
   String myFile = htmlIndex;
@@ -130,19 +131,19 @@ void handleSpeedstate() {
   {
     analogValue = halfSpeed;
     speedState = "half"; //Feedback parameter
-    speedControl(analogValue, 'b');
+    speedControl(analogValue, lastDir);
   }
   else if (t_state == "10" && powerState == "true")
   {
     analogValue = fullSpeed;
     speedState = "full"; //Feedback parameter
-    speedControl(analogValue, 'b');
+    speedControl(analogValue, lastDir);
   }
   else
   {
     analogValue = 0;
     speedState = "0"; //Feedback parameter
-    speedControl(analogValue, 'b');
+    speedControl(analogValue, lastDir);
   }
   server.send(200, "text/plane", speedState );
 }
@@ -156,7 +157,8 @@ void handleMotionstate()  {
     digitalWrite(motor_1_IN2, HIGH);
     digitalWrite(motor_2_IN3, LOW);
     digitalWrite(motor_2_IN4, HIGH);
-    speedControl(analogValue, 'b');
+    lastDir = 'b';
+    speedControl(analogValue, lastDir );
     motionState = "Forward"; //Feedback parameter
   }
   else if (t_state == "bwd" && powerState == "true")
@@ -165,7 +167,8 @@ void handleMotionstate()  {
     digitalWrite(motor_1_IN2, LOW);
     digitalWrite(motor_2_IN3, HIGH);
     digitalWrite(motor_2_IN4, LOW);
-    speedControl(analogValue, 'b');
+    lastDir = 'b';
+    speedControl(analogValue, lastDir );
     motionState = "Backward"; //Feedback parameter
   }
   else if (t_state == "rgt" && powerState == "true")
@@ -174,7 +177,8 @@ void handleMotionstate()  {
     digitalWrite(motor_1_IN2, HIGH);
     digitalWrite(motor_2_IN3, LOW);
     digitalWrite(motor_2_IN4, HIGH);
-    speedControl(analogValue, 'r');
+    lastDir = 'r';
+    speedControl(analogValue, lastDir );
     motionState = "Right"; //Feedback parameter
   }
   else if (t_state == "lft" && powerState == "true")
@@ -183,7 +187,8 @@ void handleMotionstate()  {
     digitalWrite(motor_1_IN2, HIGH);
     digitalWrite(motor_2_IN3, LOW);
     digitalWrite(motor_2_IN4, HIGH);
-    speedControl(analogValue, 'l');
+    lastDir = 'l';
+    speedControl(analogValue, lastDir);
     motionState = "Left"; //Feedback parameter
   }
   else if (t_state == "stop")
