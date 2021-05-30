@@ -33,13 +33,13 @@ HTTPUpdateServer httpUpdater;
 //#define DAC2 26
 int fullSpeed = 255;
 int halfSpeed = 230;
-int turnSpeed = 180;
+int turnSpeed = 190;
 
-#define motor_1_ENA 27
-#define motor_1_IN1 12
+#define motor_1_ENA 12
+#define motor_1_IN1 27
 #define motor_1_IN2 14
-#define motor_2_ENB 25
-#define motor_2_IN3 32
+#define motor_2_ENB 32
+#define motor_2_IN3 25
 #define motor_2_IN4 33
 
 
@@ -209,11 +209,11 @@ void speedControl(int value, char side) {
     ledcWrite(pwmChannel1, value);
     ledcWrite(pwmChannel2, value);
   }
-  else if (side == 'r' && value!=0) {
+  else if (side == 'l' && value!=0) {
     ledcWrite(pwmChannel1, value);
     ledcWrite(pwmChannel2, turnSpeed);
   }
-  else if (side == 'l' && value!=0) {
+  else if (side == 'r' && value!=0) {
     ledcWrite(pwmChannel1, turnSpeed);
     ledcWrite(pwmChannel2, value);
   }
