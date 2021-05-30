@@ -5,6 +5,7 @@
 #include <WebServer.h>
 #include <WiFiAP.h>
 #include "SPIFFS.h"
+#include <HTTPUpdateServer.h>
 
 const int freq = 30000;
 const int pwmChannel1 = 0;
@@ -22,12 +23,17 @@ const String htmlIndex = "/index.html";
 // Create AsyncWebServer object on port 80
 //AsyncWebServer server(80);
 WebServer server(80);
+HTTPUpdateServer httpUpdater;
+
+#define OTAUSER         "admin"    // Set OTA user
+#define OTAPASSWORD     "admin"    // Set OTA password
+#define OTAPATH         "/firmware"// Set path for update
 
 //#define DAC1 25
 //#define DAC2 26
 int fullSpeed = 255;
 int halfSpeed = 230;
-int turnSpeed = 200;
+int turnSpeed = 180;
 
 #define motor_1_ENA 27
 #define motor_1_IN1 12
@@ -146,37 +152,37 @@ void handleMotionstate()  {
   //Serial.println(t_state);
   if (t_state == "fwd" && powerState == "true")
   {
-    digitalWrite(motor_1_IN1, HIGH);
-    digitalWrite(motor_1_IN2, LOW);
-    digitalWrite(motor_2_IN3, HIGH);
-    digitalWrite(motor_2_IN4, LOW);
-    speedControl(analogValue, 'b');
-    motionState = "Forward"; //Feedback parameter
-  }
-  else if (t_state == "bwd" && powerState == "true")
-  {
     digitalWrite(motor_1_IN1, LOW);
     digitalWrite(motor_1_IN2, HIGH);
     digitalWrite(motor_2_IN3, LOW);
     digitalWrite(motor_2_IN4, HIGH);
     speedControl(analogValue, 'b');
-    motionState = "Backward"; //Feedback parameter
+    motionState = "Forward"; //Feedback parameter
   }
-  else if (t_state == "rgt" && powerState == "true")
+  else if (t_state == "bwd" && powerState == "true")
   {
     digitalWrite(motor_1_IN1, HIGH);
     digitalWrite(motor_1_IN2, LOW);
     digitalWrite(motor_2_IN3, HIGH);
     digitalWrite(motor_2_IN4, LOW);
+    speedControl(analogValue, 'b');
+    motionState = "Backward"; //Feedback parameter
+  }
+  else if (t_state == "rgt" && powerState == "true")
+  {
+    digitalWrite(motor_1_IN1, LOW);
+    digitalWrite(motor_1_IN2, HIGH);
+    digitalWrite(motor_2_IN3, LOW);
+    digitalWrite(motor_2_IN4, HIGH);
     speedControl(analogValue, 'r');
     motionState = "Right"; //Feedback parameter
   }
   else if (t_state == "lft" && powerState == "true")
   {
-    digitalWrite(motor_1_IN1, HIGH);
-    digitalWrite(motor_1_IN2, LOW);
-    digitalWrite(motor_2_IN3, HIGH);
-    digitalWrite(motor_2_IN4, LOW);
+    digitalWrite(motor_1_IN1, LOW);
+    digitalWrite(motor_1_IN2, HIGH);
+    digitalWrite(motor_2_IN3, LOW);
+    digitalWrite(motor_2_IN4, HIGH);
     speedControl(analogValue, 'l');
     motionState = "Left"; //Feedback parameter
   }
@@ -199,12 +205,12 @@ void speedControl(int value, char side) {
     ledcWrite(pwmChannel2, value);
   }
   else if (side == 'r' && value!=0) {
-    ledcWrite(pwmChannel1, turnSpeed);
-    ledcWrite(pwmChannel2, value);
-  }
-  else if (side == 'l' && value!=0) {
     ledcWrite(pwmChannel1, value);
     ledcWrite(pwmChannel2, turnSpeed);
+  }
+  else if (side == 'l' && value!=0) {
+    ledcWrite(pwmChannel1, turnSpeed);
+    ledcWrite(pwmChannel2, value);
   }
 }
 
@@ -237,6 +243,9 @@ void setup() {
   // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
 
+  httpUpdater.setup(&server,OTAPATH, OTAUSER, OTAPASSWORD);
+  //httpServer.begin();
+  
   // Route for root / web page
   server.on("/", handleRoot);
 
