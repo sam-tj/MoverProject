@@ -1,17 +1,22 @@
+var lastDirection = "...";
+var lastSpeed = 0;
+
 function sendMovementData(direction) {
   console.log("sendMovementData " + direction);
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
+      lastDirection = this.response;
       document.getElementById("currentDirection").innerHTML =
-        "Current State " + this.responseText;
-      if(this.responseText=="stop"){
+        "Current State " + lastDirection + " at speed " + lastSpeed;
+      if (this.responseText == "stop") {
         document.getElementById("powerSwitch").checked = false;
-        document.getElementById("slider-id-01").value=0;
-        document.getElementById("fwd_button").setAttribute('disabled', '');
-        document.getElementById("lft_button").setAttribute('disabled', '');
-        document.getElementById("rgt_button").setAttribute('disabled', '');
-        document.getElementById("bwd_button").setAttribute('disabled', '');
+        document.getElementById("slider-id-01").value = 0;
+        document.getElementById("fwd_button").setAttribute("disabled", "");
+        document.getElementById("lft_button").setAttribute("disabled", "");
+        document.getElementById("rgt_button").setAttribute("disabled", "");
+        document.getElementById("bwd_button").setAttribute("disabled", "");
+        document.getElementById("slider-id-01").setAttribute("disabled", "");
       }
     }
   };
@@ -20,30 +25,31 @@ function sendMovementData(direction) {
 }
 function sendPowerData() {
   //console.log(
-    //"sendPowerData " + document.getElementById("powerSwitch").checked
-  //);  
-  console.log(document.getElementById("slider-id-01").value);  
-  var state = document.getElementById("powerSwitch").checked;   
+  //"sendPowerData " + document.getElementById("powerSwitch").checked
+  //);
+  console.log(document.getElementById("slider-id-01").value);
+  var state = document.getElementById("powerSwitch").checked;
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-         console.log("sendPowerData " + document.getElementById("powerSwitch").checked);  
-      if (this.responseText == "true")
-      {
+      console.log(
+        "sendPowerData " + document.getElementById("powerSwitch").checked
+      );
+      if (this.responseText == "true") {
         document.getElementById("powerSwitch").checked = true;
-        document.getElementById("fwd_button").removeAttribute("disabled"); 
-        document.getElementById("lft_button").removeAttribute("disabled"); 
-        document.getElementById("rgt_button").removeAttribute("disabled"); 
-        document.getElementById("bwd_button").removeAttribute("disabled"); 
-      }
-      else if (this.responseText == "false")
-      {
+        document.getElementById("fwd_button").removeAttribute("disabled");
+        document.getElementById("lft_button").removeAttribute("disabled");
+        document.getElementById("rgt_button").removeAttribute("disabled");
+        document.getElementById("bwd_button").removeAttribute("disabled");
+        document.getElementById("slider-id-01").removeAttribute("disabled");
+      } else if (this.responseText == "false") {
         document.getElementById("powerSwitch").checked = false;
-        document.getElementById("slider-id-01").value=0;
-        document.getElementById("fwd_button").setAttribute('disabled', '');
-        document.getElementById("lft_button").setAttribute('disabled', '');
-        document.getElementById("rgt_button").setAttribute('disabled', '');
-        document.getElementById("bwd_button").setAttribute('disabled', '');
+        document.getElementById("slider-id-01").value = 0;
+        document.getElementById("fwd_button").setAttribute("disabled", "");
+        document.getElementById("lft_button").setAttribute("disabled", "");
+        document.getElementById("rgt_button").setAttribute("disabled", "");
+        document.getElementById("bwd_button").setAttribute("disabled", "");
+        document.getElementById("slider-id-01").setAttribute("disabled", "");
       }
     }
   };
@@ -55,9 +61,12 @@ function sendSpeedData(speed) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-     // document.getElementById("currentDirection").innerHTML =
-     //   "Going " + this.responseText;
-     console.log("sendSpeedData " + speed);
+      lastSpeed = this.response;
+      document.getElementById("currentDirection").innerHTML =
+        "Current State " + lastDirection + " at speed " + lastSpeed;
+      // document.getElementById("currentDirection").innerHTML =
+      //   "Going " + this.responseText;
+      console.log("sendSpeedData " + speed);
     }
   };
   xhttp.open("GET", "setSpeed?Speedstate=" + speed, true);
