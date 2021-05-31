@@ -17,6 +17,8 @@ function sendMovementData(direction) {
         document.getElementById("rgt_button").setAttribute("disabled", "");
         document.getElementById("bwd_button").setAttribute("disabled", "");
         document.getElementById("slider-id-01").setAttribute("disabled", "");
+        document.getElementById("currentDirection").innerHTML =
+          "Current State " + lastDirection;
       }
     }
   };
