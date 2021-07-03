@@ -4,17 +4,94 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mover Dashboard</title>
+    <title>Mower Dashboard</title>
     <link rel="stylesheet" type="text/css" href="min.css" />
+    <link rel="stylesheet" type="text/css" href="animation.css" />
+    <style>
+      [id*="powerSwitchButton"] {
+        zoom: 200%;
+      }
+    </style>
   </head>
   <body>
+    <div id="modalPIN" >
+    <div
+      id=""
+      class="slds-grid slds-grid_vertical-align-center slds-grid_align-center"
+      style="height: 95vh"
+    >
+      <div class="">
+        <div
+          class="
+            slds-text-heading_large
+            slds-text-align_center
+            slds-m-around_x-small
+          "
+        >
+          Hello!
+        </div>
+        <div
+          class="
+            slds-text-heading_medium
+            slds-text-align_center
+            slds-m-around_x-small
+          "
+        >
+          Nice to see you again.
+        </div>
+        <div
+          id="pinTextBox"
+          class="slds-form-element slds-text-align_center slds-m-around_x-small"
+        >
+          <label class="slds-form-element__label" for="fpin">
+            <abbr class="slds-required" title="required">* </abbr>PIN</label
+          >
+          <div class="slds-form-element__control">
+            <input
+              type="password"
+              pattern="[0-9]*" inputmode="numeric"
+              onsubmit="checkPin()"
+              
+              id="pin"
+              placeholder="Please enter your PIN"
+              required=""
+              class="slds-input"
+            />
+          </div>
+        </div>
+        <button
+        id="pinSubmitTitle"
+          class="
+            slds-text-align_center
+            slds-m-around_x-small
+            slds-button slds-button_neutral
+            aria-disabled="true"
+          "
+          onclick="checkPin()"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+    </div>
     <!-- Start End-->
-    <div class="slds-scope" style="height: 95vh">
+    <div id="restBody" class="slds-scope" style="display: none; height: 95vh">
       <div
         class="slds-grid slds-grid_vertical-align-center slds-grid_align-center"
         style="height: 100%"
       >
         <article class="slds-card" style="width: 90%; max-width: 700px">
+          
+          <div id="errorBarTop" class="slds-notify slds-notify_alert slds-alert_warning" role="alert"  style="display: none;">                       
+            <h2>You have not allowed Notifications. Please allow it from browser settings.
+            </h2>     
+            <!-- <div class="slds-notify__close">
+              <button class="slds-button slds-button_icon " onclick="askForApproval()" >
+                Try Again
+              </button>
+            </div>        -->
+          </div>
+
           <div class="slds-card__header slds-grid slds-border_bottom">
             <header
               class="slds-media slds-media_center slds-has-flexi-truncate"
@@ -28,25 +105,36 @@
                     slds-text-heading_large
                   "
                 >
-                  <span>Mover Dashboard</span>
+                  <span id="mainTitle">Mower Dashboard</span>
                 </h2>
+              </div>
+              <div class="slds-no-flex">
+                <button
+                  class="slds-button slds-button_neutral"
+                  onclick="showModal()"
+                >
+                  ⚙
+                </button>
               </div>
             </header>
           </div>
           <div class="slds-card__body slds-card__body_inner">
             <div class="demo-only demo-only--sizing slds-grid slds-wrap">
-              <div class="slds-size_3-of-3">
-                <div
-                  class="
-                    slds-box_x-small
-                    slds-text-align_center
-                    slds-m-around_x-small
-                  "
-                >
-                  🔋
+              <div class="slds-size_1-of-2">
+                <div class="slds-box_x-small slds-m-around_x-small">
+                  <button
+                    class="
+                      slds-button
+                      slds-text-color_weak slds-text-color_success
+                    "
+                    onclick="voiceAssistButton()"
+                    id="voiceAssistActiveTitle"
+                  >
+                    Voice Assist is Active 🔊
+                  </button>
                 </div>
               </div>
-              <div class="slds-size_1-of-3 slds-align_absolute-center">
+              <div class="slds-size_1-of-2">
                 <div
                   class="
                     slds-box_x-small
@@ -54,66 +142,122 @@
                     slds-m-around_x-small
                   "
                 >
-                  <div class="slds-form-element">
-                    <label class="slds-checkbox_toggle slds-grid">
-                      <span class="slds-form-element__label slds-m-bottom_none"
-                        >Power</span
-                      >
-                      <input
-                        type="checkbox"
-                        name="checkbox-toggle-16"
-                        id="powerSwitch"
-                        aria-describedby="checkbox-toggle-16"
-                        onchange="sendPowerData()"
-                      />
-                      <span
-                        id="checkbox-toggle-16"
-                        class="slds-checkbox_faux_container"
-                        aria-live="assertive"
-                      >
-                        <span class="slds-checkbox_faux"></span>
-                        <span class="slds-checkbox_on">On</span>
-                        <span class="slds-checkbox_off">Off</span>
-                      </span>
-                    </label>
+                  <div
+                    id="currentTimeTitle"
+                    class="slds-text-align_center slds-text-heading_small"
+                  >
+                    Current Time
+                  </div>
+                  <div
+                    id="time"
+                    class="slds-text-align_center slds-text-heading_small"
+                  ></div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2">
+                <div
+                  class="
+                    slds-box_x-small
+                    slds-text-align_center
+                    slds-m-around_x-small
+                  "
+                >
+                  <div
+                    class="
+                      slds-grid slds-grid_align-spread
+                      slds-p-bottom_x-small
+                    "
+                    id="progress-bar-label-id-6"
+                  >
+                    <span id="batteryTitle">Battery Percentage 🔋</span>
+                    <span aria-hidden="true">
+                      <strong></strong>
+                    </span>
+                  </div>
+                  <div
+                    class="slds-progress-bar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="25"
+                    aria-labelledby="progress-bar-label-id-6"
+                    role="progressbar"
+                  >
+                    <span class="slds-progress-bar__value" style="width: 25%">
+                      <span class="slds-assistive-text">Progress: 25%</span>
+                    </span>
                   </div>
                 </div>
               </div>
-              <div class="slds-size_2-of-3">
+              <!-- <div class="slds-size_1-of-3">
                 <div
                   class="
-                    slds-box slds-box_x-small
+                    slds-box_x-small
+                    slds-text-align_center
+                    slds-m-around_x-small
+                  "
+                ></div>
+              </div> -->
+              <!-- <div class="slds-size_1-of-3">
+                <div
+                  class="
+                    slds-box_x-small
                     slds-text-align_center
                     slds-m-around_x-small
                   "
                 >
+                  <div
+                    id="currentTimeTitle"
+                    class="slds-text-align_center slds-text-heading_small"
+                  >
+                    Current Time
+                  </div>
+                  <div
+                    id="time"
+                    class="slds-text-align_center slds-text-heading_small"
+                  ></div>
+                </div>
+              </div> -->
+              <div class="slds-size_1-of-2">
+                <div
+                  class="
+                    slds-box_x-small
+                    slds-text-align_center
+                    slds-m-horizontal_x-small
+                  "
+                >
                   <div class="slds-form-element">
-                    <label class="slds-form-element__label" for="slider-id-01">
-                      <span class="slds-slider-label">
-                        <span class="slds-slider-label__label"
-                          >Speed Control</span
-                        >
-                      </span>
-                    </label>
+                    <label
+                      id="workTimeTitle"
+                      class="slds-form-element__label"
+                      for="select-01"
+                      ><abbr class="slds-required" title="required">* </abbr>
+                      Work Time</label
+                    >
+
                     <div class="slds-form-element__control">
-                      <div class="slds-slider">
-                        <span class="slds-slider__value" aria-hidden="true"
-                          >Min</span
+                      <div class="slds-select_container">
+                        <select
+                          class="slds-select"
+                          id="select-01"
+                          required=""
+                          onchange="onSelectorChange(value)"
                         >
-                        <input
-                          type="range"
-                          id="slider-id-01"
-                          class="slds-slider__range"
-                          min="0"
-                          max="10"
-                          step="5"
-                          value="0"
-                          onchange="sendSpeedData(this.value)"
-                          disabled=""
-                        />
-                        <span class="slds-slider__value" aria-hidden="true"
-                          >Max</span
-                        >
+                          <option value="0" id="select-01-op-00">
+                            Select…
+                          </option>
+                          <option id="select-01-op-01" value="1">
+                            Morning by 8 am
+                          </option>
+                          <option id="select-01-op-02" value="2">
+                            Afternoon by 12 pm
+                          </option>
+                          <option id="select-01-op-03" value="3">
+                            Evening by 4 pm
+                          </option>
+                          <option id="select-01-op-04" value="4">
+                            Night by 8 pm
+                          </option>
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -130,6 +274,51 @@
               </div>
 
               <div class="slds-size_3-of-3">
+                <div class="slds-size_1-of-3 slds-align_absolute-center">
+                  <div
+                    class="
+                      slds-box_x-small
+                      slds-text-align_center
+                      slds-m-around_x-small
+                    "
+                  >
+                    <div class="slds-form-element" onclick="powerButtonDisablePressed()"id="powerSwitchButton">
+                      <label class="slds-checkbox_toggle slds-grid">
+                        <span
+                          id="powerTitle"
+                          class="slds-form-element__label slds-m-bottom_none"                          
+                          >Power</span
+                        >
+                        <input
+                          type="checkbox"
+                          name="checkbox-toggle-16"
+                          id="powerSwitch"
+                          aria-describedby="checkbox-toggle-16"
+                          disabled=""
+                          onchange="sendPowerData()"                          
+                        />
+                        <span
+                          id="checkbox-toggle-16"
+                          class="slds-checkbox_faux_container"
+                          aria-live="assertive"
+                        >
+                          <span class="slds-checkbox_faux"></span>
+                          <span class="slds-checkbox_on" id="powerStateOnTitle"
+                            >On</span
+                          >
+                          <span
+                            class="slds-checkbox_off"
+                            id="powerStateOffTitle"
+                            >Off</span
+                          >
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="slds-size_3-of-3">
                 <div
                   class="
                     slds-box_x-small
@@ -141,108 +330,7 @@
                   ...
                 </div>
               </div>
-              <div class="slds-size_1-of-3">
-                <div
-                  class="
-                    slds-box_x-small
-                    slds-text-align_center
-                    slds-m-around_x-small
-                  "
-                ></div>
-              </div>
-              <div class="slds-size_1-of-3">
-                <div
-                  class="
-                    slds-box_x-small
-                    slds-text-align_center
-                    slds-m-around_x-small
-                  "
-                >
-                  <button
-                    id="fwd_button"
-                    class="slds-button slds-button_brand slds-button_stretch"
-                    onclick="sendMovementData('fwd')"
-                    disabled=""
-                  >
-                    Forward
-                  </button>
-                </div>
-              </div>
 
-              <div class="slds-size_1-of-3">
-                <div
-                  class="
-                    slds-box_x-small
-                    slds-text-align_center
-                    slds-m-around_x-small
-                  "
-                ></div>
-              </div>
-
-              <!-- <div class="slds-size_1-of-3">
-                <div
-                  class="slds-box_x-small slds-text-align_center slds-m-around_x-small"
-                ></div>
-              </div> -->
-              <div class="slds-size_1-of-3">
-                <div
-                  class="
-                    slds-box_x-small
-                    slds-text-align_center
-                    slds-m-around_x-small
-                  "
-                >
-                  <button
-                    id="lft_button"
-                    class="slds-button slds-button_brand slds-button_stretch"
-                    onclick="sendMovementData('lft')"
-                    disabled=""
-                  >
-                    Left
-                  </button>
-                </div>
-              </div>
-              <div class="slds-size_1-of-3">
-                <div
-                  class="
-                    slds-box_x-small
-                    slds-text-align_center
-                    slds-m-around_x-small
-                  "
-                >
-                  <button
-                    id="bwd_button"
-                    class="slds-button slds-button_brand slds-button_stretch"
-                    onclick="sendMovementData('bwd')"
-                    disabled=""
-                  >
-                    Backward
-                  </button>
-                </div>
-              </div>
-              <!-- <div class="slds-size_1-of-3">
-                <div
-                  class="slds-box_x-small slds-text-align_center slds-m-around_x-small"
-                ></div>
-              </div> -->
-              <div class="slds-size_1-of-3">
-                <div
-                  class="
-                    slds-box_x-small
-                    slds-text-align_center
-                    slds-m-around_x-small
-                  "
-                >
-                  <button
-                    id="rgt_button"
-                    class="slds-button slds-button_brand slds-button_stretch"
-                    onclick="sendMovementData('rgt')"
-                    disabled=""
-                  >
-                    Right
-                  </button>
-                </div>
-              </div>
               <div class="slds-size_3-of-3">
                 <div
                   class="
@@ -252,8 +340,8 @@
                   "
                 ></div>
               </div>
-              <div class="slds-size_3-of-3">
-                <div
+              <div class="slds-size_3-of-3" >
+                <!-- <div
                   class="
                     slds-box_x-small
                     slds-text-align_center
@@ -261,12 +349,29 @@
                   "
                 >
                   <button
+                    id="emergencyStopTitle"
                     class="
                       slds-button slds-button_destructive slds-button_stretch
                     "
+                    disabled=""
                     onclick="sendMovementData('stop')"
                   >
                     Emergency Stop
+                  </button>
+                </div> -->
+                <div
+                  class="
+                    slds-box_x-small
+                    slds-text-align_center
+                    slds-m-around_x-small
+                  "
+                >
+                  <button
+                    id="voiceActivateTitle"
+                    class="slds-button slds-button_neutral slds-button_stretch"
+                    onclick="voiceActivate()"
+                  >
+                    Voice Activate
                   </button>
                 </div>
               </div>
@@ -277,10 +382,172 @@
     </div>
     <!-- Content End-->
 
+    <!--Modal Start-->
+    <div id="modal" style="display: none">
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-labelledby="modal-heading-01"
+        aria-modal="true"
+        aria-describedby="modal-content-id-1"
+        class="slds-modal slds-fade-in-open"
+      >
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">
+              Settings
+            </h2>
+            <p class="slds-m-top_x-small"></p>
+          </header>
+          <div
+            class="slds-modal__content slds-p-around_medium"
+            id="modal-content-id-1"
+          >
+          <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+              <a href="firmware">
+                <button
+                  class="slds-button slds-button_brand"
+                  id="updateSystemButtonTitle"
+                >
+                  Update System
+                </button>
+              </a>
+              <div class="slds-p-vertical_medium"></div>
+              <button
+                class="slds-button slds-button_brand"
+                onclick="showLanguageModal()"
+                id="languageButtonTitle"
+              >
+                Languages
+              </button>
+              <div class="slds-p-vertical_medium"></div>
+              <button
+                class="slds-button slds-button_brand"
+                onclick="saveDataToFile()"
+                id="downloadDataTitle"
+              >
+                Download Data
+              </button>
+              <div class="slds-p-vertical_medium"></div>
+            </div>
+            <div class="slds-col">
+              <button
+              class="slds-button slds-button_neutral slds-button_success"
+              onclick="voiceAssistButton()"
+              id="voiceAssistTitle"
+            >
+              Voice Assist 🔊
+            </button>
+            <div class="slds-p-vertical_medium"></div>
+            <button
+              class="slds-button slds-button_neutral "
+              onclick="notificationButton()"
+              id="notificationTitle"
+              
+            >
+              Notifications 🔔
+            </button>
+            <div class="slds-p-vertical_medium"></div>
+
+            <button
+              class="slds-button slds-button_brand"
+              onclick="notificationsCat('test')"
+              id="notificationTestTitle"
+              style="display: none;"
+            >
+              Notification Test
+            </button>
+            <div class="slds-p-vertical_medium"></div>
+
+            </div>
+            
+          </div>
+            
+            
+            
+            
+            <p id="moreComingSoonTitle">More coming soon...</p>
+          </div>
+          <footer class="slds-modal__footer slds-modal__footer_directional">
+            <button
+              class="slds-button slds-button_neutral"
+              onclick="logoutButton()"
+              id="logoutButtonTitle"
+            >
+              Logout
+            </button>
+            <button
+              class="slds-button slds-button_brand"
+              onclick="showModal()"
+              id="doneSettingsTitle"
+            >
+              Done
+            </button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+
+    <!--Modal End-->
+    <!--Modal Start-->
+
+    <div id="modalLanguage" style="display: none">
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-labelledby="modal-heading-02"
+        aria-modal="true"
+        aria-describedby="modal-content-id-1"
+        class="slds-modal slds-fade-in-open"
+      >
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <h2 id="modal-heading-02" class="slds-modal__title slds-hyphenate">
+              Language
+            </h2>
+            <p class="slds-m-top_x-small"></p>
+          </header>
+          <div
+            class="slds-modal__content slds-p-around_medium"
+            id="modal-content-id-1"
+          >
+            <button
+              class="slds-button slds-button_neutral"
+              onclick="changeLanguage('en')"
+            >
+              English / Englisch
+            </button>
+            <button
+              class="slds-button slds-button_neutral"
+              onclick="changeLanguage('de')"
+            >
+              German / Deutsch
+            </button>
+            <div class="slds-p-vertical_medium"></div>
+            <p id="moreComingSoonTitle">More coming soon...</p>
+          </div>
+          <footer class="slds-modal__footer">
+            <button
+              class="slds-button slds-button_brand"
+              onclick="showLanguageModal()"
+              id="doneLanguageTitle"
+            >
+              Done
+            </button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+
+    <!--Modal End-->
+
     <!-- Footer Start -->
     <footer id="footer">
       <p style="text-align: center; font-size: medium">
-        © Sameer Tuteja -- 2021
+        © || Sameer Tuteja || 2021
       </p>
     </footer>
     <!-- Footer End-->
